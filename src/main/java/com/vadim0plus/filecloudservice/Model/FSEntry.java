@@ -19,7 +19,7 @@ public abstract class FSEntry {
     public boolean delete() {
         if (parent == null)
             return false;
-        return parent.deleteEntry(this);
+        return parent.deleteEntry(name);
     }
 
     public abstract int size();

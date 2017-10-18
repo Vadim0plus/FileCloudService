@@ -36,9 +36,17 @@ public class Directory extends FSEntry {
         return count;
     }
 
-    public boolean deleteEntry(FSEntry entry)
+    public boolean deleteEntry(String name)
     {
-        return contents.remove(entry);
+        Iterator<FSEntry> iter = contents.iterator();
+        while(iter.hasNext()) {
+            FSEntry entry = iter.next();
+            if(entry.getName().equals(name)){
+                iter.remove();
+                return true;
+            }
+        }
+        return false;
     }
 
     /*public void addEntry(FSEntry entry)
@@ -57,10 +65,14 @@ public class Directory extends FSEntry {
         contents.add(file);
     }
 
-    public void addDir(String name, String path) {
-        FSEntry entry = getEntry()
-
-
+    public boolean addDir(String name, String path) {
+        FSEntry entry = getEntry(path);
+        if(entry instanceof Directory) {
+            Directory d = (Directory) entry;
+            d.addDir(name);
+            return true;
+        }
+        return false;
     }
 
     public void addDir(String name) {
@@ -97,7 +109,7 @@ public class Directory extends FSEntry {
         return print("");
     }
 
-    FSEntry getEntry(String fn) {
+    public FSEntry getEntry(String fn) {
         for(FSEntry entry : contents) {
             if(entry.getName().equals(fn)) {
                 return entry;
@@ -105,7 +117,7 @@ public class Directory extends FSEntry {
         }
         return null;
     }
-    FSEntry getEntry(String fn, String path) {
+    public FSEntry getEntry(String fn, String path) {
         Directory d = this;
         String curPath = path;
         while(true) {
