@@ -76,7 +76,7 @@ public class Directory extends FSEntry {
         contents.add(dir);
     }*/
 
-    protected ArrayList<FSEntry> getContents()
+    public ArrayList<FSEntry> getContents()
     {
         return contents;
     }

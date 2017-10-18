@@ -3,6 +3,9 @@ package com.vadim0plus.filecloudservice;
 import com.vadim0plus.filecloudservice.Model.Directory;
 import com.vadim0plus.filecloudservice.Model.FSEntry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class FileService {
     private Directory cd;
 
@@ -101,6 +104,44 @@ public class FileService {
         if(!srcDir.deleteEntry(srcEntry.getName()))
             return false;
         return true;
+    }
+
+    public boolean copy(String src, String destDir) {
+        FSEntry srcEntry;
+        Directory srcDir = cd;
+        Directory destDirEntry = cd;
+        if (!src.contains("/"))
+            srcEntry = cd.getEntry(src);
+        else {
+            int lastIndex = src.lastIndexOf('/');
+            srcDir = getDir(src.substring(0, lastIndex));
+            if(srcDir == null)
+                return false;
+            srcEntry = srcDir.getEntry(src.substring(lastIndex + 1));
+        }
+        if(srcEntry == null)
+            return false;
+        destDirEntry = getDir(destDir);
+        if(destDirEntry == null)
+            return false;
+        if(!destDirEntry.addEntry(srcEntry))
+            return false;
+        return true;
+    }
+
+    public String[] print(String fn, boolean recur) {
+        ArrayList<String> tree = new ArrayList<>();
+        Directory d = getDir(fn);
+        if (d == null)
+            return null;
+        for (FSEntry entry : d.getContents()) {
+            tree.add(entry.getName());
+            if ((entry instanceof Directory) && recur) {
+                String[] subTree = print(fn+"/" + entry.getName(), true);
+                tree.addAll(Arrays.asList(subTree));
+            }
+        }
+        return (String[]) tree.toArray();
     }
 
 
