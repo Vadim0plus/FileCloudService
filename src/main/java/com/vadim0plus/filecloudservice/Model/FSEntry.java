@@ -2,24 +2,18 @@ package com.vadim0plus.filecloudservice.Model;
 
 public abstract class FSEntry {
     // Entry is superclass for both File and Directory
-    protected Directory parent;
+    //protected Directory parent;
     protected long created;
     protected long lastUpdated;
     protected long lastAccessed;
     protected String name;
 
-    public FSEntry(String n, Directory p) {
+    public FSEntry(String n) {
         name = n;
-        parent = p;
+        //parent = p;
         created = System.currentTimeMillis();
         lastUpdated = System.currentTimeMillis();
         lastAccessed = System.currentTimeMillis();
-    }
-
-    public boolean delete() {
-        if (parent == null)
-            return false;
-        return parent.deleteEntry(name);
     }
 
     public abstract int size();

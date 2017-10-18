@@ -4,10 +4,11 @@ public class File extends FSEntry {
     private String content;
     private int size;
 
-    public File(String n, Directory p, int sz)
+    public File(String n)
     {
-        super(n, p);
-        size = sz;
+        super(n);
+        size = 0;
+        content ="";
     }
     public int size()
     {
@@ -20,5 +21,6 @@ public class File extends FSEntry {
     public void setContents(String c)
     {
         content = c;
+        size = c.length();
     }
 }

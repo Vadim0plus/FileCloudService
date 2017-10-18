@@ -6,9 +6,9 @@ import java.util.Iterator;
 public class Directory extends FSEntry {
     protected ArrayList<FSEntry> contents;
 
-    public Directory(String n, Directory p)
+    public Directory(String n)
     {
-        super(n, p);
+        super(n);
         contents = new ArrayList<FSEntry>();
     }
     public int size()
@@ -49,22 +49,17 @@ public class Directory extends FSEntry {
         return false;
     }
 
-    /*public void addEntry(FSEntry entry)
+    public boolean addEntry(FSEntry entry)
     {
-        contents.add(entry);
-        if (entry instanceof Directory)
-        {
-            addDir(entry);
-        }
-        else if (e instanceof File)
-            count++;
-    }*/
-
-    public void addFile(String name, int size) {
-        File file = new File(name,this,size);
-        contents.add(file);
+        return contents.add(entry);
     }
 
+    /*public void addFile(String name, int size) {
+        File file = new File(name,this,size);
+        contents.add(file);
+    }*/
+
+    /*
     public boolean addDir(String name, String path) {
         FSEntry entry = getEntry(path);
         if(entry instanceof Directory) {
@@ -73,18 +68,20 @@ public class Directory extends FSEntry {
             return true;
         }
         return false;
-    }
+    }*/
 
+    /*
     public void addDir(String name) {
         Directory dir = new Directory(name,this);
         contents.add(dir);
-    }
+    }*/
 
     protected ArrayList<FSEntry> getContents()
     {
         return contents;
     }
 
+    /*
     protected String print(String conc) {
         StringBuffer buf = new StringBuffer();
         ArrayList<FSEntry> contents = getContents();
@@ -102,12 +99,13 @@ public class Directory extends FSEntry {
             }
         }
         return buf.toString();
-    }
+    }*/
 
+    /*
     @Override
     public String toString() {
         return print("");
-    }
+    }*/
 
     public FSEntry getEntry(String fn) {
         for(FSEntry entry : contents) {
@@ -117,6 +115,8 @@ public class Directory extends FSEntry {
         }
         return null;
     }
+
+    /*
     public FSEntry getEntry(String fn, String path) {
         Directory d = this;
         String curPath = path;
@@ -139,4 +139,5 @@ public class Directory extends FSEntry {
                 }
             }
         }
+        */
 }

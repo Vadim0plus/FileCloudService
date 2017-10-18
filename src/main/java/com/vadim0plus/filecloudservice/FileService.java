@@ -4,38 +4,103 @@ import com.vadim0plus.filecloudservice.Model.Directory;
 import com.vadim0plus.filecloudservice.Model.FSEntry;
 
 public class FileService {
-    private Directory root;
+    private Directory cd;
 
-    public boolean mkdir(String name, String path) {
-        return root.addDir(name, path);
+    public FileService() {
+        cd = new Directory("/");
     }
 
-    public boolean remove(String name) {
-        FSEntry entry = null;
-        if(name.contains("/")) {
-            entry = root.getEntry(
-                    name.substring(name.lastIndexOf("/")),
-                    name.substring(0, name.lastIndexOf("/",name.length()-1))
-                    );
-        } else {
-            entry = root.getEntry(name);
-        }
-        if(entry != null ){
-            entry.delete();
+    public FileService(Directory dir) {
+        cd = dir;
+    }
+
+    public void setCd(Directory cd) {
+        this.cd = cd;
+    }
+
+    public Directory getCd() {
+        return cd;
+    }
+
+    public boolean mkdir(String fn, boolean recur) {
+        if (!fn.contains("/"))
+            return cd.addEntry(new Directory(fn));
+        else if(recur == false){
+            int lastIndex = fn.lastIndexOf('/');
+            Directory d = getDir(fn.substring(0, lastIndex));
+            if(d == null)
+                return false;
+            return d.addEntry(new Directory(fn.substring(lastIndex + 1)));
+        }else {
+            Directory d = cd;
+            FSEntry entry;
+            String[] entries = fn.split("/");
+            for (int i = 0; i < entries.length; i++) {
+                if(!d.addEntry(new Directory(entries[i])))
+                    return false;
+                d =(Directory) d.getEntry(entries[i]);
+            }
             return true;
         }
-        return false;
     }
 
-    public boolean move(String src, String dir) {
-        FSEntry entry = null;
-        if(src.contains("/")) {
-            entry = root.getEntry(
-                    src.substring(src.lastIndexOf("/")),
-                    src.substring(0, src.lastIndexOf("/",src.length()-1))
-            );
-            // don't implement
+    public Directory getDir(String path) {
+        Directory d = cd;
+        FSEntry entry;
+        String[] entries = path.split("/");
+        for (int i = 0; i < entries.length; i++) {
+            entry = d.getEntry(entries[i]);
+            if (entry != null && entry instanceof Directory) {
+                d = (Directory) entry;
+            } else
+                return null;
         }
+        return d;
+    }
+
+    public FSEntry getEntry(String fn) {
+            if (!fn.contains("/"))
+                return cd.getEntry(fn);
+            else {
+                int lastIndex = fn.lastIndexOf('/');
+                Directory d = getDir(fn.substring(0, lastIndex));
+                return d.getEntry(fn.substring(lastIndex + 1));
+            }
+    }
+
+    public boolean remove(String fn) {
+        if (!fn.contains("/"))
+            return cd.deleteEntry(fn);
+        else {
+            int lastIndex = fn.lastIndexOf('/');
+            Directory d = getDir(fn.substring(0,lastIndex));
+            return d.deleteEntry(fn.substring(lastIndex+1));
+        }
+    }
+
+    public boolean move(String src, String destDir) {
+        FSEntry srcEntry;
+        Directory srcDir = cd;
+        Directory destDirEntry = cd;
+        if (!src.contains("/"))
+            srcEntry = cd.getEntry(src);
+        else {
+            int lastIndex = src.lastIndexOf('/');
+            srcDir = getDir(src.substring(0, lastIndex));
+            if(srcDir == null)
+                return false;
+            srcEntry = srcDir.getEntry(src.substring(lastIndex + 1));
+        }
+        if(srcEntry == null)
+            return false;
+        destDirEntry = getDir(destDir);
+        if(destDirEntry == null)
+            return false;
+        if(!destDirEntry.addEntry(srcEntry))
+            return false;
+        if(!srcDir.deleteEntry(srcEntry.getName()))
+            return false;
+        return true;
     }
 
 
